@@ -8,6 +8,7 @@ import SearchBar from './components/SearchBar';
 import DayWeather from './components/DayWeather';
 import { selectCity, loadWeatherRequest, loadWeatherSuccess, loadWeatherFailure } from './store/actions';
 import { If } from './components/If';
+import TempChart from './components/TempChart';
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function App() {
       <If is={!!selectedCity}>
         Předpověď počasí pro: {selectedCity?.name}
         <DayWeather weatherPoints={weatherPoints} />
+        <TempChart weatherPoints={weatherPoints} />
       </If>
     </>
   )
