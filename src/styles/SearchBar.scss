@@ -1,0 +1,29 @@
+.search-bar {
+  position: relative;
+
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .next-cities {
+    position: absolute;
+    list-style: none;
+    top: 100%;
+    background: white;
+    border: 1px solid grey;
+    width: 100%;
+
+    .item {
+      cursor: pointer;
+      
+      &:hover { background: #eee; }
+    }
+
+    .item.active {
+      background: #eee;
+    }
+  }
+  }
+  

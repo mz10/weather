@@ -1,11 +1,14 @@
 import { type WeatherState } from '../types/base';
-import { WeatherActions, WeatherActionTypes } from './actions';
+import { type WeatherActions, WeatherActionTypes } from './actions';
 
-const initialState: WeatherState = {
-
+const defaultState: WeatherState = {
+  selectedCity: null,
+  weather: [],
+  loading: false,
+  error: null,
 };
 
-export function weatherReducer(state = initialState, action: WeatherActions): WeatherState {
+export function weatherReducer(state = defaultState, action: WeatherActions): WeatherState {
   switch (action.type) {
     default:
       return state;
