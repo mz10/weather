@@ -1,0 +1,54 @@
+.day-weather {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+    padding: 1rem;
+  
+    .day-card {
+      min-width: 120px;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  
+      .date {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+  
+      .weather-icon {
+        font-size: 2rem;
+        margin: 0.5rem 0;
+      }
+  
+      .temps {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 0.5rem 0;
+  
+        .max-temp {
+          font-weight: bold;
+          color: #ff6b6b;
+        }
+  
+        .min-temp {
+          color: #74b9ff;
+        }
+      }
+  
+      .description {
+        text-transform: capitalize;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+      }
+  
+      .wind {
+        font-size: 0.8rem;
+        opacity: 0.8;
+      }
+    }
+  }
+  

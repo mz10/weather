@@ -54,17 +54,17 @@ const SearchBar: FC<Props> = ({ cities, onSelectCity }) => {
 
             {nextCities.length > 0 && (
                 <div className="next-cities">
-                    {nextCities.map((c, i) => (
+                    {nextCities.map((city, i) => (
                         <div
-                            key={c.id}
+                            key={city.id}
                             className={cln({ item: true, active: i === activeIndex })}
                             onMouseEnter={() => setActiveIndex(i)}
                             onClick={() => {
-                                onSelectCity(c);
+                                onSelectCity(city);
                                 setCity('');
                             }}
                         >
-                            {c.name}, {c.country}
+                            {city.name}, {city.country}
                         </div>
                     ))}
                 </div>
