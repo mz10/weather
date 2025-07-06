@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchForecastApi, loadCities } from './services/weatherService';
+import { loadCities } from './services/weatherService';
 import type { RootState } from './store/store';
 import type { City } from './types/base';
 import './styles/App.scss'
 import SearchBar from './components/SearchBar';
 import DayWeather from './components/DayWeather';
-import { selectCity, loadWeatherRequest, loadWeatherSuccess, loadWeatherFailure } from './store/actions';
+import { selectCity, loadWeatherRequest } from './store/actions';
 import { If } from './components/If';
 import TempChart from './components/TempChart';
 
@@ -23,15 +23,7 @@ function App() {
   const onSelectCity = async (city: City) => {
     console.log("city", city);
     dispatch(selectCity(city));
-    //dispatch(loadWeatherRequest(city.id));
-
-    try {
-      const data = await fetchForecastApi(city.id);
-      dispatch(loadWeatherSuccess(data));
-    } 
-    catch (e: any) {
-      dispatch(loadWeatherFailure(e.message));
-    }
+    dispatch(loadWeatherRequest(city.id));
   };
 
   return (

@@ -11,7 +11,7 @@ export async function loadCities(): Promise<City[]> {
   return res.json();
 }
 
-export async function fetchForecastApi(cityId: number): Promise<WeatherRecord> {
+export async function loadWeatherApi(cityId: number): Promise<WeatherRecord> {
   const url = `${BASE_URL}/forecast?id=${cityId}&units=metric&appid=${API_KEY}&lang=cz`;
   const res = await fetch(url);
   
