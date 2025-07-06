@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadCities } from './services/weatherService';
+import { findNearestCity, loadCities } from './services/weatherService';
 import type { RootState } from './store/store';
 import type { City } from './types/base';
 import './styles/App.scss'
@@ -16,15 +16,29 @@ function App() {
   const { } = useSelector((state: RootState) => state);
   const [cities, setCities] = useState<City[]>([]);
 
-  useEffect(() => {
-    loadCities().then(setCities).catch(console.error);
-  }, []);
-
   const onSelectCity = async (city: City) => {
     console.log("city", city);
     dispatch(selectCity(city));
     dispatch(loadWeatherRequest(city.id));
   };
+  
+  async function initData() {
+    try {
+      const cities = await loadCities();
+      setCities(cities);
+
+      const city = await findNearestCity(cities);
+
+      if (city) {
+        onSelectCity(city);
+      }
+    }
+    catch(error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => { initData() }, []);
 
   return (
     <>

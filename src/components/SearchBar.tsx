@@ -30,14 +30,26 @@ const SearchBar: FC<Props> = ({ cities, onSelectCity }) => {
 
         switch (e.key) {
             case 'ArrowDown':
-                e.preventDefault();
-                setActiveIndex(idx => Math.min(idx + 1, nextCities.length - 1));
-                break;
+              e.preventDefault();
+              setActiveIndex(idx => Math.min(idx + 1, nextCities.length - 1));
+              break;
             case 'ArrowUp':
-                e.preventDefault();
-                setActiveIndex(idx => Math.max(idx - 1, 0));
-                break;
-        }
+              e.preventDefault();
+              setActiveIndex(idx => Math.max(idx - 1, 0));
+              break;
+            case 'Enter':
+              e.preventDefault();
+              const city = nextCities[activeIndex];
+              
+              if (city) {
+                onSelectCity(city);
+                setCity("");
+              }
+              break;
+            case 'Escape':
+              setCity("");
+              break;
+          }
     };
 
     return (

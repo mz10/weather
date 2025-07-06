@@ -38,3 +38,59 @@ export async function loadWeatherApi(cityId: number): Promise<WeatherRecord> {
     hourly: list
   };
 }
+
+// calculate distance
+export function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const toRad = (deg: number) => deg * Math.PI / 180;
+  const R = 6371; // km
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+export function getUserLocation(): Promise<{ lat: number; lon: number }> {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject('Geolokace není podporována v tomto prohlížeči.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude
+      }),
+      err => reject(`Chyba geolokace: ${err.message}`)
+    );
+  });
+}
+
+export async function findNearestCity(cities: City[]): Promise<City | null> {
+  try {
+    const userPos = await getUserLocation();
+    console.log("mesta", cities, userPos);
+
+    let nearest: City | null = null;
+    let minDist = Infinity;
+
+    for (const city of cities) {
+      const dist = getDistance(userPos.lat, userPos.lon, city.coord.lat, city.coord.lon);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = city;
+      }
+    }
+
+    return nearest;
+  } 
+  catch (err) {
+    console.error(err);
+    return null;
+  }
+}

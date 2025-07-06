@@ -1,4 +1,4 @@
-import React from "react";
+import { type FC } from "react";
 
 type IfBase = { children: React.ReactNode };
 type IfAnd = IfBase & { is: boolean | number; and: boolean | number; or?: never };
@@ -7,7 +7,7 @@ type IfIs  = IfBase & { is: boolean | number; and?: never; or?: never };
 
 export type IfProps = IfAnd | IfOr | IfIs;
 
-export const If: React.FC<IfProps> = ({ is, and, or, children }) => {
+export const If: FC<IfProps> = ({ is, and, or, children }) => {
   const truthy = (v: boolean | number | undefined) => Boolean(v);
   let show = truthy(is);
 
