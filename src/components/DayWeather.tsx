@@ -1,5 +1,6 @@
 import type { WeatherPoint } from '../types/base';
 import '../styles/DayWeather.scss';
+import { capitalizeFirst } from '../utils';
 
 interface Props {
   weatherPoints: WeatherPoint[];
@@ -62,7 +63,7 @@ const DayWeather: React.FC<Props> = ({ weatherPoints }) => {
               <span className="max-temp">{Math.round(maxTemp)}°C</span>
               <span className="min-temp">{Math.round(minTemp)}°C</span>
             </div>
-            <div className="description">{weather.description}</div>
+            <div className="description">{capitalizeFirst(weather.description)}</div>
             <div className="wind">🌬️ {Math.round(maxWind)} km/h</div>
           </div>
         );

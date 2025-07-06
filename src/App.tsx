@@ -9,6 +9,8 @@ import DayWeather from './components/DayWeather';
 import { selectCity, loadWeatherRequest } from './store/actions';
 import { If } from './components/If';
 import TempChart from './components/TempChart';
+import LoadingIndicator from './components/LoadingIndicator';
+import ErrorMessage from './components/ErrorMessage';
 
 function App() {
   const dispatch = useDispatch();
@@ -17,7 +19,6 @@ function App() {
   const [cities, setCities] = useState<City[]>([]);
 
   const onSelectCity = async (city: City) => {
-    console.log("city", city);
     dispatch(selectCity(city));
     dispatch(loadWeatherRequest(city.id));
   };
@@ -43,8 +44,14 @@ function App() {
   return (
     <>
       <SearchBar cities={cities} onSelectCity={onSelectCity} />
-      <If is={!!selectedCity}>
-        Předpověď počasí pro: {selectedCity?.name}
+      <If is={loading}>
+        <LoadingIndicator />
+      </If>
+      <If is={error}>
+        <ErrorMessage message={error} />
+      </If>
+      <If is={selectedCity && !loading && !error}>
+        <h2>Předpověď počasí pro: {selectedCity?.name}</h2>
         <DayWeather weatherPoints={weatherPoints} />
         <TempChart weatherPoints={weatherPoints} />
       </If>

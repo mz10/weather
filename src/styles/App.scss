@@ -5,6 +5,13 @@
   text-align: center;
 }
 
+h2 {
+	font-weight: 200;
+	font-size: 2rem;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
 @keyframes expand {
   0% {
     max-height: 0;

@@ -1,7 +1,7 @@
 import type { City, WeatherPoint, WeatherRecord } from '../types/base';
 
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
-const API_KEY = "5fbb150915e06d9b0a7ab49ad0510846"; //import.meta.env.VITE_OPENWEATHER_API_KEY as string;
+const API_KEY = "5fbb150915e06d9b0a7ab49ad0510846";
 
 export async function loadCities(): Promise<City[]> {
   const res = await fetch('/city.list.json');
@@ -15,10 +15,9 @@ export async function loadWeatherApi(cityId: number): Promise<WeatherRecord> {
   const url = `${BASE_URL}/forecast?id=${cityId}&units=metric&appid=${API_KEY}&lang=cz`;
   const res = await fetch(url);
   
-  if (!res.ok) throw new Error('Chyba při načítání předpovědi');
+  if (!res.ok) throw new Error('Chyba při načítání předpovědi!');
   
   const data = await res.json();
-  console.log(data);
   const list: WeatherPoint[] = data.list;
   
   const days: Record<string, { min: number; max: number }> = {};
@@ -74,7 +73,6 @@ export function getUserLocation(): Promise<{ lat: number; lon: number }> {
 export async function findNearestCity(cities: City[]): Promise<City | null> {
   try {
     const userPos = await getUserLocation();
-    console.log("mesta", cities, userPos);
 
     let nearest: City | null = null;
     let minDist = Infinity;
@@ -90,7 +88,6 @@ export async function findNearestCity(cities: City[]): Promise<City | null> {
     return nearest;
   } 
   catch (err) {
-    console.error(err);
-    return null;
+    throw new Error('Geolokace se nezdařila!');
   }
 }
