@@ -73,21 +73,28 @@ export function getUserLocation(): Promise<{ lat: number; lon: number }> {
 export async function findNearestCity(cities: City[]): Promise<City | null> {
   try {
     const userPos = await getUserLocation();
+    
+    return cities.reduce((nearest: City | null, city) => {
+      const dist = getDistance(
+        userPos.lat, 
+        userPos.lon, 
+        city.coord.lat, 
+        city.coord.lon
+      );
+      
+      if (!nearest) return city;
+      const nearestDist = getDistance(
+        userPos.lat,
+        userPos.lon,
+        nearest.coord.lat,
+        nearest.coord.lon
+      );
 
-    let nearest: City | null = null;
-    let minDist = Infinity;
-
-    for (const city of cities) {
-      const dist = getDistance(userPos.lat, userPos.lon, city.coord.lat, city.coord.lon);
-      if (dist < minDist) {
-        minDist = dist;
-        nearest = city;
-      }
-    }
-
-    return nearest;
+      return dist < nearestDist ? city : nearest;
+    }, null);
   } 
-  catch (err) {
-    throw new Error('Geolokace se nezdařila!');
+  catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Geolokace se nezdařila!';
+    throw new Error(message);
   }
 }

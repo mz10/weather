@@ -15,8 +15,9 @@ function* loadWeatherSaga(action: { type: string; payload: number }): SagaIterat
     const data: WeatherRecord = yield call(loadWeatherApi, action.payload);
     yield put(loadWeatherSuccess(data));
   } 
-  catch (e: any) {
-    yield put(loadWeatherFailure(e.message));
+  catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'Unknown error occurred';
+    yield put(loadWeatherFailure(message));
   }
 }
 

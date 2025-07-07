@@ -1,12 +1,12 @@
+import './styles/App.scss'
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { findNearestCity, loadCities } from './services/weatherService';
 import type { RootState } from './store/store';
 import type { City } from './types/base';
-import './styles/App.scss'
 import SearchBar from './components/SearchBar';
 import DayWeather from './components/DayWeather';
-import { selectCity, loadWeatherRequest } from './store/actions';
+import { selectCity, loadWeatherRequest, loadWeatherFailure } from './store/actions';
 import { If } from './components/If';
 import TempChart from './components/TempChart';
 import LoadingIndicator from './components/LoadingIndicator';
@@ -15,7 +15,6 @@ import ErrorMessage from './components/ErrorMessage';
 function App() {
   const dispatch = useDispatch();
   const { weatherPoints, loading, error, selectedCity } = useSelector((state: RootState) => state);
-  const { } = useSelector((state: RootState) => state);
   const [cities, setCities] = useState<City[]>([]);
 
   const onSelectCity = async (city: City) => {
@@ -23,7 +22,7 @@ function App() {
     dispatch(loadWeatherRequest(city.id));
   };
   
-  async function initData() {
+  const initData = async () => {
     try {
       const cities = await loadCities();
       setCities(cities);
@@ -34,8 +33,8 @@ function App() {
         onSelectCity(city);
       }
     }
-    catch(error) {
-      console.error(error)
+    catch(error: unknown) {
+      dispatch(loadWeatherFailure("Při načítání dat došlo k chybě"));
     }
   }
 
