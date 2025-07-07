@@ -1,69 +1,51 @@
-# React + TypeScript + Vite
+A simple single-page application for displaying five-day weather forecasts using the OpenWeatherMap API. The user can select a city from the whisperer, view with daily values and a detailed graph of temperatures at 3 hour intervals.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Instalation
+### Install PNPM
+PNPM is a fast package manager that saves disk space by sharing packages between projects.
+- using npm (install npm from https://nodejs.org):
+npm install -g pnpm
+- or using Yarn:
+yarn global add pnpm
 
-Currently, two official plugins are available:
+Verify installation by running:
+pnpm --version
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Clone the repository
+git clone https://github.com/mz10/weather.git
+cd weather
 
-## Expanding the ESLint configuration
+Install dependencies
+pnpm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Set up API key in /src/services/weatherService.ts (API_KEY)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Running and Build
+- Development mode with hot reload:
+pnpm dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- Production build:
+pnpm build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+# Main files
+DayWeather.tsx - displays the five-day overview (daily data)
+SearchBar.tsx - text input with autocomplete (cities)
+TempChart.tsx - detailed graph of temperatures at 3 hour intervals (chart.js)
+weatherService.ts - handles OpenWeatherMap API calls and data parsing store
+weatherSlice.ts - Redux Toolkit slice (state and reducers)
+sagas.ts - Redux-Saga for async HTTP requests
+citylist.json - list of cities for the autocomplete
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+# State Management and Styling
+- Uses Redux Toolkit for state management and Redux-Saga to handle HTTP requests.
+- Styles are written in SASS and compiled by Vite.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Usage
+- Open your browser and navigate to http://localhost:5173
+- Type a city name into the search field (or geolocation)
+- Select a city from the suggestions.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+# Supported Browsers
+App has been tested on the following browsers:
+- Mozilla Firefox 140 (verified) (support geolocation on localhost)
+- Google Chrome 138 (geolocation only on HTTPS)
