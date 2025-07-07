@@ -12,8 +12,10 @@ Verify installation by running:
 `pnpm --version`
 
 ### Clone the repository
-`git clone https://github.com/mz10/weather.git`
-`cd weather`
+```
+git clone https://github.com/mz10/weather.git
+cd weather
+```
 
 Install dependencies
 `pnpm install`
@@ -40,7 +42,7 @@ Set up API key in /src/services/weatherService.ts (API_KEY)
 - Styles are written in SASS and compiled by Vite.
 
 # Usage
-- Open browser and navigate to http://localhost:5173
+- Open a browser and navigate to http://localhost:5173
 - Type a city name into the search field (or geolocation)
 - Select a city from the suggestions.
 
