@@ -1,4 +1,4 @@
-import './ErrorMessage.scss';
+import '../styles/ErrorMessage.scss';
 
 type ErrorMessageProps = {
   message: string | null;

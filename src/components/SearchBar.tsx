@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, type FC } from 'react';
 import type { City } from '../types/base';
 import '../styles/SearchBar.scss';
 import { cln } from '../utils';
+import { If } from './If';
 
 interface Props {
     cities: City[];
@@ -64,7 +65,7 @@ const SearchBar: FC<Props> = ({ cities, onSelectCity }) => {
                 onKeyDown={onKeyDown}
             />
 
-            {nextCities.length > 0 && (
+            <If is={nextCities.length > 0}>
                 <div className="next-cities">
                     {nextCities.map((city, i) => (
                         <div
@@ -80,7 +81,7 @@ const SearchBar: FC<Props> = ({ cities, onSelectCity }) => {
                         </div>
                     ))}
                 </div>
-            )}
+            </If>
         </div>
     );
 };

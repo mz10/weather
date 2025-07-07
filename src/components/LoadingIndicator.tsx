@@ -1,4 +1,4 @@
-import './LoadingIndicator.scss';
+import '../styles/LoadingIndicator.scss';
 
 export default function LoadingIndicator() {
   return (
