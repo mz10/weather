@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, type FC } from 'react';
 import type { City } from '../types/base';
 import '../styles/SearchBar.scss';
-import { cln } from '../utils';
+import { cln, normalizeDiacritics } from '../utils';
 import { If } from './If';
 
 interface Props {
@@ -15,10 +15,10 @@ const SearchBar: FC<Props> = ({ cities, onSelectCity }) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const nextCities = useMemo<City[]>(() => {
-        const q = query.trim().toLowerCase();
+        const q = normalizeDiacritics(query.trim());
 
         return q.length > 1 ? cities
-            .filter(c => c.name.toLowerCase().startsWith(q))
+            .filter(c => normalizeDiacritics(c.name).startsWith(q))
             .slice(0, 10)
         : [];
     }, [query, cities]);

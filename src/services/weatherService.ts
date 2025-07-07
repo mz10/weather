@@ -1,4 +1,5 @@
 import type { City, WeatherPoint, WeatherRecord } from '../types/base';
+import { extractErrorMessage } from '../utils';
 
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 const API_KEY = "5fbb150915e06d9b0a7ab49ad0510846";
@@ -53,28 +54,50 @@ export function getDistance(lat1: number, lon1: number, lat2: number, lon2: numb
   return R * c;
 }
 
-export function getUserLocation(): Promise<{ lat: number; lon: number }> {
+export function getUserLocation(options?: { signal?: AbortSignal, timeout?: number }): Promise<{ lat: number; lon: number }> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject('Geolokace není podporována v tomto prohlížeči.');
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({
+    const timeoutId = setTimeout(() => {
+      reject('Vypršel časový limit pro geolokaci (5s)');
+    }, options?.timeout || 5000);
+
+    const success = (pos: GeolocationPosition) => {
+      clearTimeout(timeoutId);
+      resolve({
         lat: pos.coords.latitude,
         lon: pos.coords.longitude
-      }),
-      err => reject(`Chyba geolokace: ${err.message}`)
-    );
+      });
+    };
+
+    const error = (err: GeolocationPositionError) => {
+      clearTimeout(timeoutId);
+      reject(`Chyba geolokace: ${err.message}`);
+    };
+
+    const watchId = navigator.geolocation.watchPosition(success, error, {
+      enableHighAccuracy: true,
+      maximumAge: 0
+    });
+
+    options?.signal?.addEventListener('abort', () => {
+      clearTimeout(timeoutId);
+      navigator.geolocation.clearWatch(watchId);
+      reject('Geolokace byla zrušena');
+    });
   });
 }
 
-export async function findNearestCity(cities: City[]): Promise<City | null> {
+export async function findNearestCity(cities: City[], geolocSignal?: AbortSignal): Promise<City | null> {
   try {
-    const userPos = await getUserLocation();
+    const userPos = await getUserLocation({ signal: geolocSignal, timeout: 5000 });
     
     return cities.reduce((nearest: City | null, city) => {
+      if (geolocSignal?.aborted) throw new Error('Geolokace byla zrušena');
+      
       const dist = getDistance(
         userPos.lat, 
         userPos.lon, 
@@ -94,7 +117,9 @@ export async function findNearestCity(cities: City[]): Promise<City | null> {
     }, null);
   } 
   catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Geolokace se nezdařila!';
+    if (geolocSignal?.aborted) return null;
+    
+    const message = extractErrorMessage(err, 'Geolokace se nezdařila!');
     throw new Error(message);
   }
 }

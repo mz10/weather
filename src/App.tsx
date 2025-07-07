@@ -1,5 +1,5 @@
 import './styles/App.scss'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { findNearestCity, loadCities } from './services/weatherService';
 import type { RootState } from './store/store';
@@ -11,13 +11,17 @@ import { If } from './components/If';
 import TempChart from './components/TempChart';
 import LoadingIndicator from './components/LoadingIndicator';
 import ErrorMessage from './components/ErrorMessage';
+import { extractErrorMessage } from './utils';
 
 function App() {
   const dispatch = useDispatch();
   const { weatherPoints, loading, error, selectedCity } = useSelector((state: RootState) => state);
   const [cities, setCities] = useState<City[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const onSelectCity = async (city: City) => {
+    //abort running geolocation
+    abortControllerRef.current?.abort();
     dispatch(selectCity(city));
     dispatch(loadWeatherRequest(city.id));
   };
@@ -27,18 +31,25 @@ function App() {
       const cities = await loadCities();
       setCities(cities);
 
-      const city = await findNearestCity(cities);
+      abortControllerRef.current = new AbortController();
+      const city = await findNearestCity(cities, abortControllerRef.current.signal);
 
       if (city) {
         onSelectCity(city);
       }
     }
     catch(error: unknown) {
-      dispatch(loadWeatherFailure("Při načítání dat došlo k chybě"));
+      const message = extractErrorMessage(error, "Geolokace byla zrušena");
+      dispatch(loadWeatherFailure(message));
     }
   }
 
-  useEffect(() => { initData() }, []);
+  useEffect(() => {
+    initData();
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   return (
     <>
