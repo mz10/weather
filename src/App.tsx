@@ -6,7 +6,14 @@ import type { RootState } from './store/store';
 import type { City } from './types/base';
 import SearchBar from './components/SearchBar';
 import DayWeather from './components/DayWeather';
-import { selectCity, loadWeatherRequest, loadWeatherFailure } from './store/actions';
+import { 
+  selectCity, 
+  loadWeatherRequest, 
+  loadWeatherFailure,
+  loadCitiesRequest,
+  loadCitiesSuccess,
+  loadCitiesFailure
+} from './store/actions';
 import { If } from './components/If';
 import TempChart from './components/TempChart';
 import LoadingIndicator from './components/LoadingIndicator';
@@ -15,7 +22,7 @@ import { extractErrorMessage } from './utils';
 
 function App() {
   const dispatch = useDispatch();
-  const { weatherPoints, loading, error, selectedCity } = useSelector((state: RootState) => state);
+  const { weatherPoints, loading, citiesLoading, error, selectedCity } = useSelector((state: RootState) => state);
   const [cities, setCities] = useState<City[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -28,8 +35,10 @@ function App() {
   
   const initData = async () => {
     try {
+      dispatch(loadCitiesRequest());
       const cities = await loadCities();
       setCities(cities);
+      dispatch(loadCitiesSuccess(cities));
 
       abortControllerRef.current = new AbortController();
       const city = await findNearestCity(cities, abortControllerRef.current.signal);
@@ -39,13 +48,20 @@ function App() {
       }
     }
     catch(error: unknown) {
-      const message = extractErrorMessage(error, "Geolokace byla zrušena");
-      dispatch(loadWeatherFailure(message));
+      const message = extractErrorMessage(error, "Data se nepodařilo načíst!");
+      
+      if (message.includes("Seznam měst")) {
+        dispatch(loadCitiesFailure(message));
+      } 
+      else {
+        dispatch(loadWeatherFailure(message));
+      }
     }
   }
 
   useEffect(() => {
     initData();
+    
     return () => {
       abortControllerRef.current?.abort();
     };
@@ -53,10 +69,14 @@ function App() {
 
   return (
     <>
-      <SearchBar cities={cities} onSelectCity={onSelectCity} />
-      <If is={loading}>
-        <LoadingIndicator />
+      <If is={!citiesLoading}>
+        <SearchBar cities={cities} onSelectCity={onSelectCity} />
       </If>
+      <div className="loading-container">
+        <If is={loading || citiesLoading}>
+          <LoadingIndicator />
+        </If>
+      </div>
       <If is={error}>
         <ErrorMessage message={error} />
       </If>

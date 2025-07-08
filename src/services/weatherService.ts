@@ -5,7 +5,7 @@ const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 const API_KEY = "5fbb150915e06d9b0a7ab49ad0510846";
 
 export async function loadCities(): Promise<City[]> {
-  const res = await fetch('/city.list.json');
+  const res = await fetch('./city.list.json');
 
   if (!res.ok) throw new Error('Seznam měst nelze načíst!');
   
@@ -62,8 +62,8 @@ export function getUserLocation(options?: { signal?: AbortSignal, timeout?: numb
     }
 
     const timeoutId = setTimeout(() => {
-      reject('Vypršel časový limit pro geolokaci (5s)');
-    }, options?.timeout || 5000);
+      reject('Vypršel časový limit pro geolokaci (15s)');
+    }, options?.timeout || 15000);
 
     const success = (pos: GeolocationPosition) => {
       clearTimeout(timeoutId);
@@ -93,7 +93,7 @@ export function getUserLocation(options?: { signal?: AbortSignal, timeout?: numb
 
 export async function findNearestCity(cities: City[], geolocSignal?: AbortSignal): Promise<City | null> {
   try {
-    const userPos = await getUserLocation({ signal: geolocSignal, timeout: 5000 });
+    const userPos = await getUserLocation({ signal: geolocSignal, timeout: 15000 });
     
     return cities.reduce((nearest: City | null, city) => {
       if (geolocSignal?.aborted) throw new Error('Geolokace byla zrušena');

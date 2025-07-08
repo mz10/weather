@@ -1,6 +1,7 @@
 export interface WeatherState {
     selectedCity: City | null;
     loading: boolean;
+    citiesLoading: boolean;
     error: string | null;
     weather: WeatherDay[];
     weatherPoints: WeatherPoint[];
